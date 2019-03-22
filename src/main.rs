@@ -7,7 +7,8 @@ extern crate serde_derive;
 
 use std::env;
 use actix_web::{
-    server, http, middleware, App, HttpRequest, HttpResponse, Responder, Json
+    server, middleware, fs,
+    App, HttpRequest, HttpResponse, Responder, Json
 };
 
 
@@ -22,7 +23,6 @@ impl Clips {
     fn get() {}
     fn get_one() {}
     fn post(item: Json<Item>) -> HttpResponse{
-        println!("model: {:?}", &item);
         HttpResponse::Ok().json(item.0)
     }
 }
@@ -36,11 +36,13 @@ fn get_server_port() -> u16 {
 }
 
 fn index(req: &HttpRequest) -> impl Responder {
-    "WebClipper Application"
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("../static/index.html"))
 }
 
 fn main() {
-    ::std::env::set_var("RUST_LOG", "actix_web=info");
+    std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
     let port = get_server_port();
@@ -49,9 +51,9 @@ fn main() {
     server::new(|| {
         App::new()
             .middleware(middleware::Logger::default())
+            .handler("/static", fs::StaticFiles::new("static").unwrap())
             .resource("/", |r| r.f(index))
-            // .resource("/clips", |r| r.method(http::Method::POST).with(create_clip))
-            .resource("/clips", |r| r.method(http::Method::POST).with(Clips::post))
+            .resource("/clips", |r| r.post().with(Clips::post))
     })
     .bind(format!("0.0.0.0:{}", port))
     .expect(&format!("Can not bind to port {}", port))
