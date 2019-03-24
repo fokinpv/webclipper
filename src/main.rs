@@ -8,7 +8,7 @@ extern crate serde_derive;
 
 use std::env;
 use actix_web::{
-    server, middleware, fs, http, App, Responder, Json
+    server, middleware, fs, App, Responder, Json
 };
 
 mod db;
@@ -40,12 +40,12 @@ fn main() {
     let port = get_server_port();
 
     server::new(|| {
-        App::with_state(AppState { db: db::DB::new() })
+        App::with_state(AppState { db: db::DB::default() })
             .middleware(middleware::Logger::default())
             .handler("/static", fs::StaticFiles::new("static").unwrap())
             .resource("/", |r| r.f(index))
             .resource("/clips", |r| {
-                r.method(http::Method::GET).with(Clips::get);
+                r.get().with(Clips::get);
                 r.post().with(Clips::post);
             })
     })
