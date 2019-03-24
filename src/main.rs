@@ -6,31 +6,29 @@ extern crate env_logger;
 #[macro_use]
 extern crate serde_derive;
 
+use actix_web::{fs, middleware, server, App, Json, Responder};
 use std::env;
-use actix_web::{
-    server, middleware, fs, App, Responder, Json
-};
+use std::sync::{Arc, Mutex};
 
 mod db;
-mod models;
 mod handlers;
+mod models;
 mod views;
 
-use models::*;
 use handlers::*;
+use models::*;
 use views::*;
 
-
 pub struct AppState {
-    db: db::DB<Item>
+    db: Arc<Mutex<db::DB<Item>>>,
 }
 
 // we need to read the PORT from the env variable (Heroku sets it)
 fn get_server_port() -> u16 {
     env::var("PORT")
-    .ok()
-    .and_then(|p| p.parse().ok())
-    .unwrap_or(8181)
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(8181)
 }
 
 fn main() {
@@ -38,9 +36,10 @@ fn main() {
     env_logger::init();
 
     let port = get_server_port();
+    let db = Arc::new(Mutex::new(db::DB::default()));
 
-    server::new(|| {
-        App::with_state(AppState { db: db::DB::default() })
+    server::new(move || {
+        App::with_state(AppState { db: db.clone() })
             .middleware(middleware::Logger::default())
             .handler("/static", fs::StaticFiles::new("static").unwrap())
             .resource("/", |r| r.f(index))

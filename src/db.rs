@@ -2,15 +2,16 @@ use std::cell::{Ref, RefCell};
 
 #[derive(Default, Clone)]
 pub struct DB<T> {
-    pub items: RefCell<Vec<T>>
+    pub items: RefCell<Vec<T>>,
 }
 
 impl<T> DB<T>
-    where T: Clone
+where
+    T: Clone,
 {
     pub fn new() -> Self {
         DB {
-            items: RefCell::new(Vec::new())
+            items: RefCell::new(Vec::new()),
         }
     }
     pub fn all(&self) -> Ref<Vec<T>> {
