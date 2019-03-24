@@ -1,6 +1,6 @@
-use std::cell::{Ref, RefCell};
+use std::cell::RefCell;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Serialize, Deserialize)]
 pub struct DB<T> {
     pub items: RefCell<Vec<T>>,
 }
@@ -14,8 +14,8 @@ where
             items: RefCell::new(Vec::new()),
         }
     }
-    pub fn all(&self) -> Ref<Vec<T>> {
-        self.items.borrow()
+    pub fn all(&self) -> Vec<T> {
+        self.items.borrow().iter().cloned().collect()
     }
     pub fn add(&self, item: T) {
         let mut items = self.items.borrow_mut();

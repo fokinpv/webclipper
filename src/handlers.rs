@@ -5,8 +5,7 @@ use super::*;
 pub struct Clips;
 impl Clips {
     pub fn get((req, state): (HttpRequest<AppState>, State<AppState>)) -> HttpResponse {
-        println!("{:?}", state.db.lock().unwrap().all());
-        HttpResponse::Ok().finish()
+        HttpResponse::Ok().json(state.db.lock().unwrap().all())
     }
     pub fn get_one() {}
     pub fn post((item, state): (Json<Item>, State<AppState>)) -> HttpResponse {
