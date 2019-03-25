@@ -1,5 +1,5 @@
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct Item {
-    id: u32,
-    content: String,
+    pub id: usize,
+    pub content: String,
 }
