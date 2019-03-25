@@ -15,12 +15,13 @@ mod handlers;
 mod models;
 mod views;
 
-use handlers::*;
-use models::*;
-use views::*;
+use db::{ DB, DBType };
+use handlers::Clips;
+use models::Item;
+use views::index;
 
 pub struct AppState {
-    db: Arc<Mutex<db::DB<Item>>>,
+    db: Arc<Mutex<DBType>>,
 }
 
 // we need to read the PORT from the env variable (Heroku sets it)
@@ -36,7 +37,7 @@ fn main() {
     env_logger::init();
 
     let port = get_server_port();
-    let db = Arc::new(Mutex::new(db::DB::default()));
+    let db = Arc::new(Mutex::new(DB::default()));
 
     server::new(move || {
         App::with_state(AppState { db: db.clone() })

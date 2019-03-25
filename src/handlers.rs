@@ -1,5 +1,4 @@
 use actix_web::{HttpRequest, HttpResponse, State};
-// use std::thread;
 use super::*;
 
 pub struct Clips;
@@ -10,9 +9,7 @@ impl Clips {
     pub fn get_one() {}
     pub fn post((item, state): (Json<Item>, State<AppState>)) -> HttpResponse {
         println!("{:?}", std::thread::current().id());
-        state.db.lock().unwrap().add(item.0.clone());
-        println!("{:?}", item);
-        println!("{:?}", state.db.lock().unwrap().all());
+        state.db.lock().unwrap().insert(item.0.clone());
         HttpResponse::Ok().json(item.0)
     }
 }
