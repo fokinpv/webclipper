@@ -19,6 +19,9 @@ where
     pub fn all(&self) -> Vec<T> {
         self.items.borrow().iter().cloned().collect()
     }
+    pub fn get(&self, pk: usize) -> Option<T> {
+        self.items.borrow().get(pk).cloned()
+    }
     pub fn insert(&self, item: T) {
         let mut items = self.items.borrow_mut();
         items.push(item);

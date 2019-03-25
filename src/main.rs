@@ -48,6 +48,7 @@ fn main() {
                 r.get().with(Clips::get);
                 r.post().with(Clips::post);
             })
+            .resource("/clips/{id}", |r| r.get().with(Clips::get_one))
     })
     .bind(format!("0.0.0.0:{}", port))
     .expect(&format!("Can not bind to port {}", port))
