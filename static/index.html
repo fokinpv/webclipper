@@ -6,6 +6,8 @@
     <title>WebClipper</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
   <section class="hero is-primary">
@@ -21,6 +23,36 @@
   </div>
   </section>
   <section class="section">
+    <div class="container">
+      <div id="app">
+        <figure v-for="item in clips">
+          <code>
+            $ {{ item.content }}
+          </code>
+        </figure>
+      </div>
+    </div>
   </section>
   </body>
+  <script>
+    Vue.prototype.$axios = axios;
+    var app = new Vue({
+      el: '#app',
+      mounted: function () {
+        console.log('mounted');
+        this.$axios.get("/clips")
+          .then(function (response) {
+            console.log(response);
+            app.clips = response.data;
+          })
+          .catch(function (error) {
+            console.log(error)
+          });
+      },
+      data: {
+        clips: [],
+        message: 'You loaded this page on ' + new Date().toLocaleString()
+      }
+    })
+  </script>
 </html>
