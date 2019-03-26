@@ -1,6 +1,5 @@
-use std::cell::RefCell;
-
 use crate::models::Item;
+use std::cell::RefCell;
 
 pub type DBType = DB<Item>;
 

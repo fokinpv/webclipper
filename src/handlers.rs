@@ -1,11 +1,6 @@
 use super::*;
 use actix_web::{HttpRequest, HttpResponse, State};
 
-#[derive(Default, Clone, Debug, Serialize, Deserialize)]
-pub struct NewItem {
-    content: String,
-}
-
 pub struct Clips;
 impl Clips {
     pub fn get((req, state): (HttpRequest<AppState>, State<AppState>)) -> HttpResponse {
