@@ -4,16 +4,20 @@ use crate::models::Item;
 
 pub type DBType = DB<Item>;
 
+pub trait Row<T> {
+    fn set_id(&mut self, id: usize) {}
+}
+
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct DB<T> {
-    pub items: RefCell<Vec<T>>,
+    items: RefCell<Vec<T>>,
 }
 
 impl<T> DB<T>
 where
-    T: Clone,
+    T: Clone + Row<T>,
 {
-    pub fn next_pk(&self) -> usize {
+    fn next_pk(&self) -> usize {
         self.items.borrow().len()
     }
     pub fn all(&self) -> Vec<T> {
@@ -22,8 +26,10 @@ where
     pub fn get(&self, pk: usize) -> Option<T> {
         self.items.borrow().get(pk).cloned()
     }
-    pub fn insert(&self, item: T) {
+    pub fn insert(&self, mut item: T) -> T {
+        item.set_id(self.next_pk());
         let mut items = self.items.borrow_mut();
-        items.push(item);
+        items.push(item.clone());
+        item
     }
 }

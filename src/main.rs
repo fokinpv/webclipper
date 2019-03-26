@@ -15,7 +15,7 @@ mod handlers;
 mod models;
 mod views;
 
-use db::{ DB, DBType };
+use db::{DBType, DB};
 use handlers::Clips;
 use models::Item;
 use views::index;

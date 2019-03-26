@@ -1,9 +1,9 @@
-use actix_web::{HttpRequest, HttpResponse, State};
 use super::*;
+use actix_web::{HttpRequest, HttpResponse, State};
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct NewItem {
-    content: String
+    content: String,
 }
 
 pub struct Clips;
@@ -16,13 +16,8 @@ impl Clips {
         let item = state.db.lock().unwrap().get(pk);
         HttpResponse::Ok().json(item)
     }
-    pub fn post((new_item, state): (Json<NewItem>, State<AppState>)) -> HttpResponse {
-        let item = Item {
-            id: state.db.lock().unwrap().next_pk(),
-            content: new_item.content.clone(),
-        };
-
-        state.db.lock().unwrap().insert(item.clone());
-        HttpResponse::Ok().json(item)
+    pub fn post((item, state): (Json<Item>, State<AppState>)) -> HttpResponse {
+        let created_item = state.db.lock().unwrap().insert(item.clone());
+        HttpResponse::Ok().json(created_item)
     }
 }
