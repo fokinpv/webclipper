@@ -24,17 +24,18 @@ impl Clips {
         (req, state): (HttpRequest<AppState>, State<AppState>),
     ) -> FutureResponse<HttpResponse> {
         req.body() // <- get Body future
-            .limit(1024) // <- change max size of the body to a 1kb
+            .limit(8192) // <- change max size of the body to a 4kb
             .from_err()
             .and_then(move |bytes| {
                 // <- complete body
                 let content = String::from_utf8(bytes.to_vec()).unwrap();
                 let item = Item {
                     id: None,
-                    content: content
+                    content: content,
                 };
-               let created_item = state.db.lock().unwrap().insert(item.clone());
-               Ok(HttpResponse::Ok().json(created_item))
+                let created_item =
+                    state.db.lock().unwrap().insert(item.clone());
+                Ok(HttpResponse::Ok().json(created_item))
             })
             .responder()
     }
