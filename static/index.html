@@ -4,10 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WebClipper</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
+    >
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/styles/default.min.css"
+    >
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script
+      src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.6/build/highlight.min.js"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue-highlightjs/dist/axios.min.js"></script>
+
   </head>
   <body>
   <section class="hero is-primary">
@@ -25,19 +37,42 @@
   <section class="section">
     <div class="container">
       <div id="app">
-        <figure v-for="item in clips">
-          <pre>
-            <code>
-              $ {{ item.content }}
-            </code>
-          </pre>
-        </figure>
+        <div class="container" v-for="item in clips">
+          <pre v-highlightjs><code class="python">{{ item.content }}</code></pre>
+        </div> <!-- box -->
       </div>
     </div>
   </section>
   </body>
   <script>
     Vue.prototype.$axios = axios;
+
+    Vue.directive('highlightjs', {
+      deep: true,
+      bind: function (el, binding) {
+        // on first bind, highlight all targets
+        let targets = el.querySelectorAll('code')
+        targets.forEach((target) => {
+          // if a value is directly assigned to the directive, use this
+          // instead of the element content.
+          if (binding.value) {
+            target.textContent = binding.value
+          }
+          hljs.highlightBlock(target)
+        })
+      },
+      componentUpdated: function (el, binding) {
+        // after an update, re-fill the content and then highlight
+        let targets = el.querySelectorAll('code')
+        targets.forEach((target) => {
+          if (binding.value) {
+            target.textContent = binding.value
+            hljs.highlightBlock(target)
+          }
+        })
+      }
+    })
+
     var app = new Vue({
       el: '#app',
       mounted: function () {
