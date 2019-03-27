@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
-// #![allow(unused_imports)]
+#![allow(unused_imports)]
 extern crate actix_web;
 extern crate env_logger;
 #[macro_use]

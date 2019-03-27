@@ -1,5 +1,11 @@
 use super::*;
-use actix_web::{HttpRequest, HttpResponse, State};
+use actix_web::{
+    AsyncResponder, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
+    State,
+};
+use bytes::Bytes;
+// use std::io::Bytes;
+use futures::Future;
 
 pub struct Clips;
 impl Clips {
@@ -15,9 +21,22 @@ impl Clips {
         let item = state.db.lock().unwrap().get(pk);
         HttpResponse::Ok().json(item)
     }
-    pub fn post((item, state): (Json<Item>, State<AppState>)) -> HttpResponse {
-        let created_item = state.db.lock().unwrap().insert(item.clone());
-        HttpResponse::Ok().json(created_item)
+    // pub fn post((item, state): (Json<Item>, State<AppState>)) -> HttpResponse {
+    //     let created_item = state.db.lock().unwrap().insert(item.clone());
+    //     HttpResponse::Ok().json(created_item)
+    // }
+    pub fn post(
+        (req, state): (HttpRequest<AppState>, State<AppState>),
+    ) -> FutureResponse<HttpResponse> {
+        req.body() // <- get Body future
+            .limit(1024) // <- change max size of the body to a 1kb
+            .from_err()
+            .and_then(|bytes: Bytes| {
+                // <- complete body
+                println!("==== BODY ==== {:?}", String::from_utf8(bytes.to_vec()));
+                Ok(HttpResponse::Ok().into())
+            })
+            .responder()
     }
     pub fn delete_one(
         (req, state): (HttpRequest<AppState>, State<AppState>),

@@ -26,9 +26,11 @@
     <div class="container">
       <div id="app">
         <figure v-for="item in clips">
-          <code>
-            $ {{ item.content }}
-          </code>
+          <pre>
+            <code>
+              $ {{ item.content }}
+            </code>
+          </pre>
         </figure>
       </div>
     </div>
