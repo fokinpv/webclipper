@@ -77,7 +77,7 @@
       el: '#app',
       mounted: function () {
         console.log('mounted');
-        this.$axios.get("/clips")
+        this.$axios.get("/api/snippets")
           .then(function (response) {
             console.log(response);
             app.clips = response.data;
@@ -88,7 +88,6 @@
       },
       data: {
         clips: [],
-        message: 'You loaded this page on ' + new Date().toLocaleString()
       }
     })
   </script>

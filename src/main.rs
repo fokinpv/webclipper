@@ -44,11 +44,11 @@ fn main() {
             .middleware(middleware::Logger::default())
             .handler("/static", fs::StaticFiles::new("static").unwrap())
             .resource("/", |r| r.f(index))
-            .resource("/clips", |r| {
+            .resource("/api/snippets", |r| {
                 r.get().with(Clips::get);
                 r.post().with(Clips::post);
             })
-            .resource("/clips/{id}", |r| r.get().with(Clips::get_one))
+            .resource("/api/snippets/{id}", |r| r.get().with(Clips::get_one))
     })
     .bind(format!("0.0.0.0:{}", port))
     .expect(&format!("Can not bind to port {}", port))
