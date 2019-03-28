@@ -35,25 +35,11 @@
     </a>
   </div>
   </nav>
-
-  <section class="hero is-dark">
-    <div class="hero-body">
-      <div class="container">
-        <h1 class="title">
-          WebClipper
-        </h1>
-        <h2 class="subtitle">
-          Place to save snippets from console.
-        </h2>
-      </div>
-    </div>
-  </section>
-
   <section class="section">
     <div class="container">
       <div id="app">
         <div class="container" v-for="item in clips">
-          <pre v-highlightjs><code>{{ item.content }}</code></pre>
+          <pre v-highlightjs><code>{{ content }}</code></pre>
         </div> <!-- box -->
       </div>
     </div>
@@ -92,7 +78,7 @@
       el: '#app',
       mounted: function () {
         console.log('mounted');
-        this.$axios.get("/api/snippets")
+        this.$axios.get("/api/snippets/0")
           .then(function (response) {
             console.log(response);
             app.clips = response.data;
@@ -102,7 +88,7 @@
           });
       },
       data: {
-        clips: [],
+        snippet: {},
       }
     })
   </script>

@@ -2,6 +2,8 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 extern crate actix_web;
+#[macro_use]
+extern crate askama;
 extern crate env_logger;
 #[macro_use]
 extern crate serde_derive;
@@ -17,8 +19,7 @@ mod views;
 
 use db::{DBType, DB};
 use handlers::Clips;
-use models::Item;
-use views::index;
+use views::{index, snippet};
 
 pub struct AppState {
     db: Arc<Mutex<DBType>>,
@@ -44,6 +45,7 @@ fn main() {
             .middleware(middleware::Logger::default())
             .handler("/static", fs::StaticFiles::new("static").unwrap())
             .resource("/", |r| r.f(index))
+            .resource("/{id}", |r| r.f(snippet))
             .resource("/api/snippets", |r| {
                 r.get().with(Clips::get);
                 r.post().with(Clips::post);

@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 actix-web = "0.7.18"
+askama = { version = "0.8,0", features = ["with-actix-web"] }
 bytes = "0.4.12"
 env_logger = "0.6.1"
 futures = "0.1.25"

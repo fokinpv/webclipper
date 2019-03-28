@@ -1,7 +1,7 @@
-use crate::models::Item;
+use crate::models::Snippet;
 use std::cell::RefCell;
 
-pub type DBType = DB<Item>;
+pub type DBType = DB<Snippet>;
 
 pub trait Row<T> {
     fn set_id(&mut self, id: usize) {}
