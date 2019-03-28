@@ -44,7 +44,7 @@ impl Clips {
                 let content = String::from_utf8(bytes.to_vec()).unwrap();
                 let item = Snippet {
                     id: None,
-                    content: content,
+                    content
                 };
                 let created_item =
                     state.db.lock().unwrap().insert(item.clone());
