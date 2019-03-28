@@ -18,9 +18,14 @@ pub fn index(req: &HttpRequest<AppState>) -> impl Responder {
 pub fn snippet(req: &HttpRequest<AppState>) -> impl Responder {
     let snippet_id: usize =
         req.match_info().get("id").unwrap().parse().unwrap();
-    let snippet = req.state().db.lock().unwrap().get(snippet_id).unwrap();
-    let template = SnippetTemplate {
-        content: &snippet.content,
-    };
-    template.into_response()
+    let snippet = req.state().db.lock().unwrap().get(snippet_id);
+    match snippet {
+        Some(snippet) => {
+            let template = SnippetTemplate {
+                content: &snippet.content,
+            };
+            template.into_response()
+        },
+        None => Ok(HttpResponse::NotFound().finish()),
+    }
 }
