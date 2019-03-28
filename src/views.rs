@@ -23,5 +23,4 @@ pub fn snippet(req: &HttpRequest<AppState>) -> impl Responder {
         content: &snippet.content,
     };
     template.into_response()
-    // HttpResponse::Ok().finish()
 }
