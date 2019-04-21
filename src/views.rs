@@ -4,15 +4,17 @@ use askama::Template;
 use askama::actix_web::TemplateIntoResponse;
 
 #[derive(Template)]
+#[template(path = "index.html")]
+struct IndexTemplate;
+
+#[derive(Template)]
 #[template(path = "snippet.html")]
 struct SnippetTemplate<'a> {
     content: &'a String,
 }
 
 pub fn index(req: &HttpRequest<AppState>) -> impl Responder {
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/index.html"))
+    IndexTemplate.into_response()
 }
 
 pub fn snippet(req: &HttpRequest<AppState>) -> impl Responder {
