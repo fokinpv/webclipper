@@ -20,8 +20,11 @@ pub fn index(req: &HttpRequest<AppState>) -> impl Responder {
 
 pub fn snippet(req: &HttpRequest<AppState>) -> impl Responder {
     let hashid = req.match_info().get("id").unwrap();
+    println!("{}", hashid);
     let snippet_id = req.state().hashid.lock().unwrap().decode(hashid);
+    println!("{}", snippet_id);
     let snippet = req.state().db.lock().unwrap().get(snippet_id);
+    println!("{:?}", snippet);
 
     match snippet {
         Some(snippet) => {
