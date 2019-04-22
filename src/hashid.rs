@@ -18,6 +18,6 @@ impl HashID {
         self.harsh.encode(&[id as u64]).unwrap()
     }
     pub fn decode(&self, hash: &str) -> usize {
-        0
+        self.harsh.decode(hash).unwrap()[0] as usize
     }
 }

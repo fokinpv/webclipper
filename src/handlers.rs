@@ -26,11 +26,10 @@ impl Clips {
     ) -> HttpResponse {
         HttpResponse::Ok().json(state.db.lock().unwrap().all())
     }
-    pub fn get_one(
-        (req, state): (HttpRequest<AppState>, State<AppState>),
-    ) -> HttpResponse {
-        let pk: usize = req.match_info().get("id").unwrap().parse().unwrap();
-        let item = state.db.lock().unwrap().get(pk);
+    pub fn get_one(req: HttpRequest<AppState>) -> HttpResponse {
+        let hashid = req.match_info().get("id").unwrap();
+        let pk = req.state().hashid.lock().unwrap().decode(hashid);
+        let item = req.state().db.lock().unwrap().get(pk);
         HttpResponse::Ok().json(item)
     }
     pub fn post(req: HttpRequest<AppState>) -> FutureResponse<HttpResponse> {
