@@ -41,11 +41,15 @@ impl Clips {
             .and_then(move |bytes| {
                 // <- complete body
                 let content = String::from_utf8(bytes.to_vec()).unwrap();
+                println!("{}", content);
                 let item = Snippet { id: None, content };
                 let created_item = db.lock().unwrap().insert(item.clone());
+                println!("{:?}", created_item);
                 let hash =
                     hashid.lock().unwrap().encode(created_item.id.unwrap());
+                println!("{}", hash);
                 let resource = CreatedSnippet::from_snippet(&hash);
+                println!("{:?}", resource);
 
                 Ok(HttpResponse::Created().json(resource))
             })
