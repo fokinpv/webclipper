@@ -4,7 +4,7 @@ use std::cell::RefCell;
 pub type DBType = DB<Snippet>;
 
 pub trait Row<T> {
-    fn set_id(&mut self, id: usize) {}
+    fn set_id(&mut self, id: usize);
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]

@@ -12,9 +12,9 @@ struct CreatedSnippet {
     href: String,
 }
 impl CreatedSnippet {
-    fn from_snippet(snippet: &Snippet) -> Self {
+    fn from_snippet(hash: &str) -> Self {
         CreatedSnippet {
-            href: format!("/api/snippets/{}", snippet.id.unwrap()),
+            href: format!("/{}", hash),
         }
     }
 }
@@ -33,22 +33,20 @@ impl Clips {
         let item = state.db.lock().unwrap().get(pk);
         HttpResponse::Ok().json(item)
     }
-    pub fn post(
-        (req, state): (HttpRequest<AppState>, State<AppState>),
-    ) -> FutureResponse<HttpResponse> {
+    pub fn post(req: HttpRequest<AppState>) -> FutureResponse<HttpResponse> {
+        let db = req.state().db.clone();
+        let hashid = req.state().hashid.clone();
+        // Default limit for a body size is 256K
         req.body() // <- get Body future
-            .limit(8192) // <- change max size of the body to a 4kb
             .from_err()
             .and_then(move |bytes| {
                 // <- complete body
                 let content = String::from_utf8(bytes.to_vec()).unwrap();
-                let item = Snippet {
-                    id: None,
-                    content
-                };
-                let created_item =
-                    state.db.lock().unwrap().insert(item.clone());
-                let resource = CreatedSnippet::from_snippet(&created_item);
+                let item = Snippet { id: None, content };
+                let created_item = db.lock().unwrap().insert(item.clone());
+                let hash =
+                    hashid.lock().unwrap().encode(created_item.id.unwrap());
+                let resource = CreatedSnippet::from_snippet(&hash);
 
                 Ok(HttpResponse::Created().json(resource))
             })
