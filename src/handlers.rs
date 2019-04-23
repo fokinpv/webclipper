@@ -28,9 +28,13 @@ impl Clips {
     }
     pub fn get_one(req: HttpRequest<AppState>) -> HttpResponse {
         let hashid = req.match_info().get("id").unwrap();
-        let pk = req.state().hashid.lock().unwrap().decode(hashid);
-        let item = req.state().db.lock().unwrap().get(pk);
-        HttpResponse::Ok().json(item)
+        match req.state().hashid.lock().unwrap().decode(hashid) {
+            Some(pk) => {
+                let item = req.state().db.lock().unwrap().get(pk);
+                HttpResponse::Ok().json(item)
+            }
+            None => HttpResponse::NotFound().finish(),
+        }
     }
     pub fn post(req: HttpRequest<AppState>) -> FutureResponse<HttpResponse> {
         let db = req.state().db.clone();
@@ -41,15 +45,11 @@ impl Clips {
             .and_then(move |bytes| {
                 // <- complete body
                 let content = String::from_utf8(bytes.to_vec()).unwrap();
-                println!("{}", content);
                 let item = Snippet { id: None, content };
                 let created_item = db.lock().unwrap().insert(item.clone());
-                println!("{:?}", created_item);
                 let hash =
                     hashid.lock().unwrap().encode(created_item.id.unwrap());
-                println!("{}", hash);
                 let resource = CreatedSnippet::from_snippet(&hash);
-                println!("{:?}", resource);
 
                 Ok(HttpResponse::Created().json(resource))
             })

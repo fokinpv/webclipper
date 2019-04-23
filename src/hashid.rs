@@ -17,7 +17,10 @@ impl HashID {
     pub fn encode(&self, id: usize) -> String {
         self.harsh.encode(&[id as u64]).unwrap()
     }
-    pub fn decode(&self, hash: &str) -> usize {
-        self.harsh.decode(hash).unwrap()[0] as usize
+    pub fn decode(&self, hash: &str) -> Option<usize> {
+        match self.harsh.decode(hash) {
+            Some(hash) => Some(hash[0] as usize),
+            None => None,
+        }
     }
 }

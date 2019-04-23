@@ -14,24 +14,24 @@ struct SnippetTemplate<'a> {
 }
 
 pub fn index(req: &HttpRequest<AppState>) -> impl Responder {
-    println!("{}", req.uri());
     IndexTemplate.into_response()
 }
 
 pub fn snippet(req: &HttpRequest<AppState>) -> impl Responder {
     let hashid = req.match_info().get("id").unwrap();
-    println!("{}", hashid);
-    let snippet_id = req.state().hashid.lock().unwrap().decode(hashid);
-    println!("{}", snippet_id);
-    let snippet = req.state().db.lock().unwrap().get(snippet_id);
-    println!("{:?}", snippet);
 
-    match snippet {
-        Some(snippet) => {
-            let template = SnippetTemplate {
-                content: &snippet.content,
-            };
-            template.into_response()
+    match req.state().hashid.lock().unwrap().decode(hashid) {
+        Some(snippet_id) => {
+            let snippet = req.state().db.lock().unwrap().get(snippet_id);
+            match snippet {
+                Some(snippet) => {
+                    let template = SnippetTemplate {
+                        content: &snippet.content,
+                    };
+                    template.into_response()
+                }
+                None => Ok(HttpResponse::NotFound().finish()),
+            }
         }
         None => Ok(HttpResponse::NotFound().finish()),
     }
